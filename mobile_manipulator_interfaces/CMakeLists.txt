@@ -15,7 +15,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Quaternion.msg"
   "msg/Pose.msg"
   "msg/Bool.msg"
-  "srv/SetTargetPosition.srv"
 )
 
 ament_export_dependencies(rosidl_default_runtime)

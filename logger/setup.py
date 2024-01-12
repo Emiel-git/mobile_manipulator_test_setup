@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'target_position_py'
+package_name = 'logger'
 
 setup(
     name=package_name,
@@ -14,13 +14,12 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='emiel',
-    maintainer_email='emiel@todo.todo',
+    maintainer_email='537396@student.saxion.nl',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "target_position_node = target_position_py.target_position:main"
         ],
     },
 )

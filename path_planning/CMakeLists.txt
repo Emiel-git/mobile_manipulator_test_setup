@@ -7,25 +7,27 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(moveit_ros_planning_interface REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(mobile_manipulator_interfaces REQUIRED)
-find_package(target_position_py)
+find_package(geometry_msgs REQUIRED)
+find_package(moveit_ros_planning_interface REQUIRED)
 
-add_executable(path_planning src/path_planning.cpp)
-target_include_directories(path_planning PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
-target_compile_features(path_planning PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+add_executable(path_planner_node src/static_path_planner.cpp)
 ament_target_dependencies(
-  path_planning
-  mobile_manipulator_interfaces
-  "moveit_ros_planning_interface"
-  "rclcpp"
-)
+  path_planner_node 
+  rclcpp 
+  geometry_msgs 
+  moveit_ros_planning_interface)
 
-install(TARGETS 
-  path_planning
+add_executable(dynamic_path_planner_node src/dynamic_path_planner.cpp)
+ament_target_dependencies(
+  dynamic_path_planner_node 
+  rclcpp 
+  geometry_msgs 
+  moveit_ros_planning_interface) 
+
+install(TARGETS
+  path_planner_node
+  dynamic_path_planner_node
   DESTINATION lib/${PROJECT_NAME})
 
 ament_package()

@@ -1,0 +1,62 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/emiel/dev_ws/install/ur_calibration/include/**",
+        "/home/emiel/dev_ws/install/ur_robot_driver/include/**",
+        "/home/emiel/dev_ws/install/ur_controllers/include/**",
+        "/home/emiel/dev_ws/install/ur_dashboard_msgs/include/**",
+        "/home/emiel/dev_ws/install/mobile_manipulator_interfaces/include/**",
+        "/home/emiel/moveit2_ws/install/pilz_industrial_motion_planner_testutils/include/**",
+        "/home/emiel/moveit2_ws/install/pilz_industrial_motion_planner/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_visual_tools/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_task_constructor_visualization/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_task_constructor_demo/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_task_constructor_core/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_ros_control_interface/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_simple_controller_manager/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_setup_assistant/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_setup_srdf_plugins/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_setup_core_plugins/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_setup_controllers/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_setup_app_plugins/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_setup_framework/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_servo/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_ros_visualization/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_hybrid_planning/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_ros_planning_interface/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_ros_benchmarks/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_ros_warehouse/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_ros_robot_interaction/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_ros_perception/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_ros_move_group/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_planners_ompl/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_ros_planning/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_ros_occupancy_map_monitor/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_kinematics/include/**",
+        "/home/emiel/moveit2_ws/install/chomp_motion_planner/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_core/include/**",
+        "/home/emiel/moveit2_ws/install/srdfdom/include/**",
+        "/home/emiel/moveit2_ws/install/rviz_marker_tools/include/**",
+        "/home/emiel/moveit2_ws/install/rosparam_shortcuts/include/**",
+        "/home/emiel/moveit2_ws/install/moveit_task_constructor_msgs/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/emiel/dev_ws/src/mobile_manipulator_test_setup/manipulators/Universal_Robots_ROS2_Driver/ur_calibration/include/**",
+        "/home/emiel/dev_ws/src/mobile_manipulator_test_setup/manipulators/Universal_Robots_ROS2_Driver/ur_controllers/include/**",
+        "/home/emiel/dev_ws/src/mobile_manipulator_test_setup/manipulators/Universal_Robots_ROS2_Driver/ur_robot_driver/include/**",
+        "/home/emiel/dev_ws/src/mobile_manipulator_test_setup/path_planning/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

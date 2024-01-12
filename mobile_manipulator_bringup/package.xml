@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>path_planning</name>
+  <name>mobile_manipulator_bringup</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="537396@student.saxion.nl">emiel</maintainer>
@@ -9,10 +9,11 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>rclcpp</depend>
-  <depend>geometry_msgs</depend>
-  <depend>moveit_ros_planning_interface</depend>
   <exec_depend>target_position</exec_depend>
+  <exec_depend>base_movement</exec_depend>
+  <exec_depend>ur_bringup</exec_depend>
+  <exec_depend>ur_description</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
