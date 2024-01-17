@@ -2,7 +2,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
-#include "geometry_msgs/msg/pose.h"
+#include "geometry_msgs/msg/pose_stamped.h"
 #include "moveit/move_group_interface/move_group_interface.h"
 using std::placeholders::_1;
 
@@ -15,13 +15,13 @@ class PathPlanning : public rclcpp::Node
     : Node("path_planner")
     {
         // create target position subsriber
-        target_position_subscription_ = this->create_subscription<geometry_msgs::msg::Pose>(
+        target_position_subscription_ = this->create_subscription<geometry_msgs::msg::PoseStamped>(
         "/target_position", 10, std::bind(&PathPlanning::target_position_callback, this, _1));
     }
 
   private:
-    void target_position_callback(const geometry_msgs::msg::Pose & msg);
-    rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr target_position_subscription_;
+    void target_position_callback(const geometry_msgs::msg::PoseStamped & msg);
+    rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr target_position_subscription_;
 };
 
 
@@ -54,10 +54,9 @@ void plan_exec_path(geometry_msgs::msg::Pose picking_pose)
     };     
 }; 
 
-void PathPlanning::target_position_callback(const geometry_msgs::msg::Pose & msg)
+void PathPlanning::target_position_callback(const geometry_msgs::msg::PoseStamped & msg)
     {
-        RCLCPP_INFO(this->get_logger(), "I heard: '%f'", msg.position.x);
-        plan_exec_path(msg);
+        plan_exec_path(msg.pose);
     }
 
 int main(int argc, char * argv[])

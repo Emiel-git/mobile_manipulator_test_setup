@@ -2,7 +2,7 @@
 import numpy as np
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import PoseStamped
 
 
 class TargetPositionNode(Node):
@@ -16,7 +16,7 @@ class TargetPositionNode(Node):
         self.declare_parameter('p', 0.0)
         self.declare_parameter('y', 0.0)
                        
-        self.pub_ = self.create_publisher(Pose, "/target_position", 10)
+        self.pub_ = self.create_publisher(PoseStamped, "/target_position", 10)
         self.get_logger().info("Target_position_node created.")
         self.timer_ = self.create_timer(0.5, self.publish_target_position)
 
@@ -42,14 +42,16 @@ class TargetPositionNode(Node):
         
         qx,qy,qz,qw = self.get_quaternion_from_euler(roll, pitch, yaw)
 
-        self.msg = Pose()
-        self.msg.position.x = X * 10e-3
-        self.msg.position.y = Y * 10e-3
-        self.msg.position.z = Z * 10e-3
-        self.msg.orientation.x = qx
-        self.msg.orientation.y = qy
-        self.msg.orientation.z = qz
-        self.msg.orientation.w = qw
+        self.msg = PoseStamped()
+        self.msg.header.frame_id = "/target"
+        self.msg.header.stamp = self.get_clock().now().to_msg()
+        self.msg.pose.position.x = X * 10e-3
+        self.msg.pose.position.y = Y * 10e-3
+        self.msg.pose.position.z = Z * 10e-3
+        self.msg.pose.orientation.x = qx
+        self.msg.pose.orientation.y = qy
+        self.msg.pose.orientation.z = qz
+        self.msg.pose.orientation.w = qw
         self.pub_.publish(self.msg)
 
 def main(args=None):

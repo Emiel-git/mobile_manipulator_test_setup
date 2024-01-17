@@ -23,7 +23,7 @@ def generate_launch_description():
             'launch_rviz':'true',
             'ur_type':'ur5',
             'use_fake_hardware':'true',
-            'robot_ip':'000.000',
+            'robot_ip':'xxx.yyy.www',
             'initial_joint_controller':'joint_trajectory_controller'
         }.items()
     )
@@ -38,7 +38,7 @@ def generate_launch_description():
             'launch_rviz':'false',
             'ur_type':'ur5',
             'use_fake_hardware':'true',
-            'robot_ip':'000.000',
+            'robot_ip':'xxx.yyy.www',
             'initial_joint_controller':'joint_trajectory_controller'
         }.items()
     )
@@ -54,7 +54,7 @@ def generate_launch_description():
     base_movement_node = Node(
         package='base_movement',
         executable='base_movement_node',
-        # parameters=[config]
+        parameters=[config]
     )
     ld.add_action(base_movement_node)
 
@@ -63,6 +63,15 @@ def generate_launch_description():
         executable='dynamic_path_planner_node'
     )
     ld.add_action(path_planner_node)
+
+    ld.add_action(ur_moveit_launch_file)
+
+    # tf_logger_node = Node(
+    #     package='logger',
+    #     executable='tf_logger_node',
+    #     parameters=[config]
+    # )
+    # ld.add_action(tf_logger_node)
 
     return ld
     
