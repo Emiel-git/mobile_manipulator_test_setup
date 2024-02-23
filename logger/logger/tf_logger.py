@@ -18,6 +18,8 @@ class FrameListener(Node):
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.sub_ = self.create_subscription(PoseStamped,"/target_position",self.target_position_callback,10)
+        self.sub1_ = self.create_subscription(PoseStamped,"/opti_base/pose",self.opti_base_callback,10)
+        self.sub2_ = self.create_subscription(PoseStamped,"/opti_end_effector/pose",self.opti_end_effector_callback,10)
 
         # Call on_timer function on a set interval
         timer_period = 0.1
@@ -52,7 +54,55 @@ class FrameListener(Node):
         file_name = "target_position-world"
         header = ['Time','X', 'Y','Z','r','p','y']
         self.create_or_open_csv(self.folder_name,file_name,header,data )
+
+
+    def opti_base_callback(self,msg):
+        roll, pitch, yaw = self.euler_from_quaternion(
+        msg.pose.orientation.y,
+        msg.pose.orientation.x,
+        msg.pose.orientation.z,
+        msg.pose.orientation.w)
+
+        time = float(f"{msg.header.stamp.sec}{msg.header.stamp.nanosec}")*1e-9
+        time_secs= datetime.fromtimestamp(time).strftime('%S.%f')  
         
+        data = [
+                time_secs,
+                msg.pose.position.y+0.438,
+                msg.pose.position.x-2.2075,
+                msg.pose.position.z-0.916,
+                roll, 
+                pitch, 
+                yaw]
+        
+        file_name = "opti_base-world"
+        header = ['Time','X', 'Y','Z','r','p','y']
+        self.create_or_open_csv(self.folder_name,file_name,header,data )
+
+
+    def opti_end_effector_callback(self,msg):
+        roll, pitch, yaw = self.euler_from_quaternion(
+        msg.pose.orientation.y,
+        msg.pose.orientation.x,
+        msg.pose.orientation.z,
+        msg.pose.orientation.w)
+
+        time = float(f"{msg.header.stamp.sec}{msg.header.stamp.nanosec}")*1e-9
+        time_secs= datetime.fromtimestamp(time).strftime('%S.%f')  
+        
+        data = [
+                time_secs,
+                msg.pose.position.y + 0.4327,
+                msg.pose.position.x - 2.02516,
+                msg.pose.position.z -1.89648,
+                roll, 
+                pitch, 
+                yaw]
+        
+        file_name = "opti_end_effector-world"
+        header = ['Time','X', 'Y','Z','r','p','y']
+        self.create_or_open_csv(self.folder_name,file_name,header,data )
+    
 
     def on_timer(self):
         data = self.find_transform("base_link")

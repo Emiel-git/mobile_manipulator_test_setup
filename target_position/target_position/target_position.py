@@ -45,14 +45,15 @@ class TargetPositionNode(Node):
         self.msg = PoseStamped()
         self.msg.header.frame_id = "/target"
         self.msg.header.stamp = self.get_clock().now().to_msg()
-        self.msg.pose.position.x = X * 10e-3
-        self.msg.pose.position.y = Y * 10e-3
-        self.msg.pose.position.z = Z * 10e-3
+        self.msg.pose.position.x = X
+        self.msg.pose.position.y = Y
+        self.msg.pose.position.z = Z 
         self.msg.pose.orientation.x = qx
         self.msg.pose.orientation.y = qy
         self.msg.pose.orientation.z = qz
         self.msg.pose.orientation.w = qw
         self.pub_.publish(self.msg)
+        # self.get_logger().info(str(self.msg))
 
 def main(args=None):
     rclpy.init(args=args)

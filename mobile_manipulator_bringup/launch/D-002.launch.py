@@ -24,10 +24,10 @@ def generate_launch_description():
             'ur_type':'ur5',
             'use_fake_hardware':'true',
             'robot_ip':'192.168.1.180',
-            'initial_joint_controller':'joint_trajectory_controller'
+            # 'initial_joint_controller':'scaled_joint_trajectory_controller'
         }.items()
     )
-    ld.add_action(ur_driver_launch_file)
+    # ld.add_action(ur_driver_launch_file)
 
     ur_moveit_launch_file = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -37,9 +37,9 @@ def generate_launch_description():
         launch_arguments={
             'launch_rviz':'true',
             'ur_type':'ur5',
-            'use_fake_hardware':'true',
+            'use_fake_hardware':'false',
             'robot_ip':'192.168.1.180',
-            'initial_joint_controller':'joint_trajectory_controller'
+            # 'initial_joint_controller':'scaled_joint_trajectory_controller'
         }.items()
     )
     ld.add_action(ur_moveit_launch_file)
@@ -56,7 +56,7 @@ def generate_launch_description():
         executable='base_movement_node',
         parameters=[config]
     )
-    # ld.add_action(base_movement_node)
+    ld.add_action(base_movement_node)
 
     path_planner_node = Node(
         package='path_planning',
@@ -69,7 +69,7 @@ def generate_launch_description():
         executable='tf_logger_node',
         parameters=[config]
     )
-    # ld.add_action(tf_logger_node)
+    ld.add_action(tf_logger_node)
 
     return ld
     
