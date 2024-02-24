@@ -51,12 +51,20 @@ def generate_launch_description():
     )
     ld.add_action(target_position_node)
 
+    collision_objects_node = Node(
+        package='collision_objects',
+        executable='collision_objects_node',
+        parameters=[config]
+    )
+    ld.add_action(collision_objects_node)
+
+
     base_movement_node = Node(
         package='base_movement',
         executable='base_movement_node',
         parameters=[config]
     )
-    # ld.add_action(base_movement_node)
+    ld.add_action(base_movement_node)
 
     path_planner_node = Node(
         package='path_planning',

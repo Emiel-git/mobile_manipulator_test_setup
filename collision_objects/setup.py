@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            "collision_objects_node = collision_objects.collision_objects:main"
         ],
     },
 )
