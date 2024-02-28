@@ -18,7 +18,8 @@ class TargetPositionNode(Node):
                        
         self.pub_ = self.create_publisher(PoseStamped, "/target_position", 10)
         self.get_logger().info("Target_position_node created.")
-        self.timer_ = self.create_timer(0.5, self.publish_target_position)
+        interval = 1/0.5
+        self.timer_ = self.create_timer(interval, self.publish_target_position)
 
     def get_quaternion_from_euler(self, roll, pitch, yaw):
         roll = np.deg2rad(roll)

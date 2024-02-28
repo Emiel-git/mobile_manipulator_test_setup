@@ -72,6 +72,12 @@ def generate_launch_description():
     )
     ld.add_action(path_planner_node)
 
+    tool0_tf_node = Node(
+        package='logger',
+        executable='tool0_tf_node'
+    )
+    ld.add_action(tool0_tf_node)
+
     tf_logger_node = Node(
         package='logger',
         executable='tf_logger_node',

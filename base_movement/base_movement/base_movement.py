@@ -5,6 +5,7 @@ from rclpy.node import Node
 from tf2_ros import TransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 from std_msgs.msg import Float64
+import time
 
 
 
@@ -97,6 +98,7 @@ class BaseMovementNode(Node):
         
 
 def main(args=None):
+    time.sleep(5)
     rclpy.init(args=args)
     node = BaseMovementNode()
     rclpy.spin(node)

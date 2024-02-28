@@ -112,9 +112,9 @@ class FrameListener(Node):
             data = data
             self.create_or_open_csv(self.folder_name,file_name,header,data )
 
-        data = self.find_transform("flange")
+        data = self.find_transform("tool0")
         if data != None:
-            file_name = "flange-world"
+            file_name = "tool0-world"
             header = ['Time', 'X', 'Y','Z','r','p','y']
             data = data
             self.create_or_open_csv(self.folder_name,file_name,header,data )

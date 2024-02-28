@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "tf_logger_node = logger.tf_logger:main"
+            "tf_logger_node = logger.tf_logger:main",
+            "tool0_tf_node = logger.tool0_logger:main"
         ],
     },
 )
