@@ -20,16 +20,17 @@ class FrameListener(Node):
         self.sub_ = self.create_subscription(PoseStamped,"/target_position",self.target_position_callback,10)
         self.sub1_ = self.create_subscription(PoseStamped,"/opti_base/pose",self.opti_base_callback,10)
         self.sub2_ = self.create_subscription(PoseStamped,"/opti_end_effector/pose",self.opti_end_effector_callback,10)
+        self.sub3_ = self.create_subscription(PoseStamped,"opti_frame/pose",self.opti_frame_callback,10)
 
         # Call on_timer function on a set interval
-        timer_period = 0.1
+        timer_period = 1/250
         self.timer = self.create_timer(timer_period, self.on_timer)
         
         # Current position and orientation of the target frame with respect to the 
         # reference frame. x and y are in meters, and yaw is in radians.
         time = self.get_clock().now().nanoseconds*1e-9
         dt = datetime.fromtimestamp(time).strftime('%Y-%m-%d_%H:%M:%S.%f')
-        self.folder_name = f'{dt}.csv'
+        self.folder_name = f'{dt}'
 
 
     def target_position_callback(self,msg):
@@ -51,15 +52,15 @@ class FrameListener(Node):
                 pitch, 
                 yaw]
         
-        file_name = "target_position-world"
+        file_name = "target_position-world.csv"
         header = ['Time','X', 'Y','Z','r','p','y']
         self.create_or_open_csv(self.folder_name,file_name,header,data )
 
 
     def opti_base_callback(self,msg):
         roll, pitch, yaw = self.euler_from_quaternion(
-        msg.pose.orientation.y,
         msg.pose.orientation.x,
+        msg.pose.orientation.y,
         msg.pose.orientation.z,
         msg.pose.orientation.w)
 
@@ -68,22 +69,22 @@ class FrameListener(Node):
         
         data = [
                 time_secs,
-                msg.pose.position.y+0.438,
-                msg.pose.position.x-2.2075,
-                msg.pose.position.z-0.916,
+                msg.pose.position.x,
+                msg.pose.position.y,
+                msg.pose.position.z,
                 roll, 
                 pitch, 
                 yaw]
         
-        file_name = "opti_base-world"
+        file_name = "opti_base-world.csv"
         header = ['Time','X', 'Y','Z','r','p','y']
         self.create_or_open_csv(self.folder_name,file_name,header,data )
 
 
     def opti_end_effector_callback(self,msg):
         roll, pitch, yaw = self.euler_from_quaternion(
-        msg.pose.orientation.y,
         msg.pose.orientation.x,
+        msg.pose.orientation.y,
         msg.pose.orientation.z,
         msg.pose.orientation.w)
 
@@ -92,14 +93,37 @@ class FrameListener(Node):
         
         data = [
                 time_secs,
-                msg.pose.position.y + 0.4327,
-                msg.pose.position.x - 2.02516,
-                msg.pose.position.z -1.89648,
+                msg.pose.position.x,
+                msg.pose.position.y,
+                msg.pose.position.z,
                 roll, 
                 pitch, 
                 yaw]
         
-        file_name = "opti_end_effector-world"
+        file_name = "opti_end_effector-world.csv"
+        header = ['Time','X', 'Y','Z','r','p','y']
+        self.create_or_open_csv(self.folder_name,file_name,header,data )
+
+    def opti_frame_callback(self,msg):
+        roll, pitch, yaw = self.euler_from_quaternion(
+        msg.pose.orientation.x,
+        msg.pose.orientation.y,
+        msg.pose.orientation.z,
+        msg.pose.orientation.w)
+
+        time = float(f"{msg.header.stamp.sec}{msg.header.stamp.nanosec}")*1e-9
+        time_secs= datetime.fromtimestamp(time).strftime('%S.%f')  
+        
+        data = [
+                time_secs,
+                msg.pose.position.x,
+                msg.pose.position.y,
+                msg.pose.position.z,
+                roll, 
+                pitch, 
+                yaw]
+        
+        file_name = "opti_frame-world.csv"
         header = ['Time','X', 'Y','Z','r','p','y']
         self.create_or_open_csv(self.folder_name,file_name,header,data )
     
@@ -107,18 +131,18 @@ class FrameListener(Node):
     def on_timer(self):
         data = self.find_transform("base_link")
         if data != None:
-            file_name = "base_link-world"
+            file_name = "base_link-world.csv"
             header = ['Time', 'X', 'Y','Z','r','p','y']
             data = data
             self.create_or_open_csv(self.folder_name,file_name,header,data )
 
         data = self.find_transform("tool0")
         if data != None:
-            file_name = "tool0-world"
+            file_name = "tool0-world.csv"
             header = ['Time', 'X', 'Y','Z','r','p','y']
             data = data
             self.create_or_open_csv(self.folder_name,file_name,header,data )
-     
+
 
     def find_transform(self,target_frame):
         # Store frame names in variables that will be used to

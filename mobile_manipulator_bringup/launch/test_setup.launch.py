@@ -83,7 +83,7 @@ def generate_launch_description():
         executable='tf_logger_node',
         parameters=[config]
     )
-    # ld.add_action(tf_logger_node)
+    ld.add_action(tf_logger_node)
 
     return ld
     

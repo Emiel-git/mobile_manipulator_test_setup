@@ -15,8 +15,8 @@ class BaseMovementNode(Node):
         super().__init__("base_movement")
         self.get_logger().info("base_movement_node created")
         self.declare_parameter('max_pos', [0.6,0.8,1.5])
-        self.declare_parameter('max_v', [0.25,0.1,0.2])
-        self.declare_parameter('max_a', [0.1,-0.01,0.25,-0.1])
+        self.declare_parameter('max_v', [0.25,0.1,0.25])
+        self.declare_parameter('max_a', [0.1,-0.33,0.33,-0.1])
 
         self.tf_broadcaster = TransformBroadcaster(self)
         self.pub_ = self.create_publisher(Float64,"/base_velocity",10)
@@ -51,10 +51,12 @@ class BaseMovementNode(Node):
         duration = (time.nanoseconds-self.start_time)*1e-9
         if self.i <= len(max_pos)-1:
             self.velocity = self.generate_velocity(max_pos,max_v,max_a,duration)
+            
         else:
             self.velocity = 0.0
-        # define translation
+        
         self.position += self.velocity*self.timer_interval
+        # define translation
         t.transform.translation.x = self.position
         t.transform.translation.y = 0.0
         t.transform.translation.z = 0.0
@@ -67,40 +69,38 @@ class BaseMovementNode(Node):
     def generate_velocity(self, max_pos,max_vel,acc,duration):        
         # accelerate till max velocity is reached
         velocity = self.velocity
-        if self.position <= max_pos[self.i]:
-            velocity = self.velocity + acc[self.i] * (duration - self.interval)
+        if self.position < max_pos[self.i]:
+            velocity = self.velocity + acc[self.i] * self.timer_interval
             if velocity >= max_vel[self.i] and acc[self.i] > 0:
                 velocity = max_vel[self.i]
             elif velocity <= max_vel[self.i] and acc[self.i] < 0:
                 velocity = max_vel[self.i]
 
             if self.i < len(max_pos)-1:
-                self.interval = duration
                 return velocity
             elif not self.set_decc_time:
                 decc = -acc[self.i+1]
                 t_decc = np.sqrt(2*self.velocity/decc)
                 s_decc = self.velocity*t_decc-0.5*decc*t_decc*t_decc
                 if self.position >= (max_pos[self.i]-s_decc):
-                    self.start_decc_time = duration
                     self.set_decc_time = 1
-                    velocity = self.velocity-(decc*(duration-self.start_decc_time))
+                    decc = -acc[self.i+1]
+                    velocity = self.velocity-(decc*self.timer_interval)
             else:
                 decc = -acc[self.i+1]
-                velocity = self.velocity-(decc*(duration-self.start_decc_time))
+                velocity = self.velocity-(decc*self.timer_interval)
                 if velocity < 0:
-                    velocity = 0.0   
+                    velocity = 0.0 
         else:
             self.i +=1
-            
-        self.interval = duration    
+              
         return velocity
         
 
 def main(args=None):
-    time.sleep(5)
     rclpy.init(args=args)
     node = BaseMovementNode()
+    time.sleep(5)
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
