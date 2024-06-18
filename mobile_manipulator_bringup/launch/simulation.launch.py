@@ -27,7 +27,7 @@ def generate_launch_description():
             # 'initial_joint_controller':'scaled_joint_trajectory_controller'
         }.items()
     )
-    # ld.add_action(ur_driver_launch_file)
+    ld.add_action(ur_driver_launch_file)
 
     ur_moveit_launch_file = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -50,6 +50,13 @@ def generate_launch_description():
         parameters=[config]
     )
     ld.add_action(target_position_node)
+    
+    collision_objects_node = Node(
+        package='collision_objects',
+        executable='collision_objects_node',
+        parameters=[config]
+    )
+    ld.add_action(collision_objects_node)
 
     base_movement_node = Node(
         package='base_movement',
@@ -63,6 +70,12 @@ def generate_launch_description():
         executable='dynamic_path_planner_node'
     )
     ld.add_action(path_planner_node)
+
+    tool0_tf_node = Node(
+        package='logger',
+        executable='tool0_tf_node'
+    )
+    ld.add_action(tool0_tf_node)
 
     tf_logger_node = Node(
         package='logger',

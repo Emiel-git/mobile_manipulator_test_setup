@@ -14,21 +14,6 @@ def generate_launch_description():
         'params.yaml'
     )
 
-    ur_driver_launch_file = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('ur_robot_driver'),
-                         'launch/ur5.launch.py')
-        ),
-        launch_arguments={
-            'launch_rviz':'false',
-            'ur_type':'ur5',
-            'use_fake_hardware':'true',
-            'robot_ip':'192.168.1.180',
-            'initial_joint_controller':'joint_trajectory_controller'
-        }.items()
-    )
-    ld.add_action(ur_driver_launch_file)
-
     ur_moveit_launch_file = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('ur_moveit_config'),
@@ -37,7 +22,7 @@ def generate_launch_description():
         launch_arguments={
             'launch_rviz':'true',
             'ur_type':'ur5',
-            'use_fake_hardware':'true',
+            'use_fake_hardware':'false',
             'robot_ip':'192.168.1.180',
             'initial_joint_controller':'joint_trajectory_controller'
         }.items()

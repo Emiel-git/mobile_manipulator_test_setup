@@ -5,6 +5,8 @@ from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener 
 from geometry_msgs.msg import PoseStamped
+from tf2_ros import TransformBroadcaster
+from geometry_msgs.msg import TransformStamped
 import math 
 import os
 import csv
@@ -17,13 +19,15 @@ class FrameListener(Node):
         self.get_logger().info("logger node created.")
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.tf_broadcaster = TransformBroadcaster(self)
+        self.data_frame = None
         self.sub_ = self.create_subscription(PoseStamped,"/target_position",self.target_position_callback,10)
         self.sub1_ = self.create_subscription(PoseStamped,"/opti_base/pose",self.opti_base_callback,10)
         self.sub2_ = self.create_subscription(PoseStamped,"/opti_end_effector/pose",self.opti_end_effector_callback,10)
         self.sub3_ = self.create_subscription(PoseStamped,"opti_frame/pose",self.opti_frame_callback,10)
 
         # Call on_timer function on a set interval
-        timer_period = 1/250
+        timer_period = 1/330    #330Hz
         self.timer = self.create_timer(timer_period, self.on_timer)
         
         # Current position and orientation of the target frame with respect to the 
@@ -40,11 +44,9 @@ class FrameListener(Node):
         msg.pose.orientation.z,
         msg.pose.orientation.w)
 
-        time = float(f"{msg.header.stamp.sec}{msg.header.stamp.nanosec}")*1e-9
-        time_secs= datetime.fromtimestamp(time).strftime('%S.%f')  
-        
+        time = float(f"{msg.header.stamp.sec}{msg.header.stamp.nanosec}")*1e-9 
         data = [
-                time_secs,
+                time,
                 msg.pose.position.x,
                 msg.pose.position.y,
                 msg.pose.position.z,
@@ -58,85 +60,43 @@ class FrameListener(Node):
 
 
     def opti_base_callback(self,msg):
-        roll, pitch, yaw = self.euler_from_quaternion(
-        msg.pose.orientation.x,
-        msg.pose.orientation.y,
-        msg.pose.orientation.z,
-        msg.pose.orientation.w)
-
-        time = float(f"{msg.header.stamp.sec}{msg.header.stamp.nanosec}")*1e-9
-        time_secs= datetime.fromtimestamp(time).strftime('%S.%f')  
-        
-        data = [
-                time_secs,
-                msg.pose.position.x,
-                msg.pose.position.y,
-                msg.pose.position.z,
-                roll, 
-                pitch, 
-                yaw]
-        
-        file_name = "opti_base-world.csv"
-        header = ['Time','X', 'Y','Z','r','p','y']
-        self.create_or_open_csv(self.folder_name,file_name,header,data )
+        data = self.find_transform("opti_base/base_link","world")
+        if data != None and self.data_frame != None:
+            file_name = "opti_base-world.csv"
+            header = ['Time', 'X', 'Y','Z','r','p','y']
+            data[1] = - data[1] - (self.data_frame[1] - 0.946489982)
+            data[2] = data[2]  - (self.data_frame[2] + 0.005516529)
+            data[3] = data[3]  - (self.data_frame[3] + 0.049718142)
+            data[6] = data[6] + 180
+            data = data
+            self.create_or_open_csv(self.folder_name,file_name,header,data )
 
 
     def opti_end_effector_callback(self,msg):
-        roll, pitch, yaw = self.euler_from_quaternion(
-        msg.pose.orientation.x,
-        msg.pose.orientation.y,
-        msg.pose.orientation.z,
-        msg.pose.orientation.w)
-
-        time = float(f"{msg.header.stamp.sec}{msg.header.stamp.nanosec}")*1e-9
-        time_secs= datetime.fromtimestamp(time).strftime('%S.%f')  
-        
-        data = [
-                time_secs,
-                msg.pose.position.x,
-                msg.pose.position.y,
-                msg.pose.position.z,
-                roll, 
-                pitch, 
-                yaw]
-        
-        file_name = "opti_end_effector-world.csv"
-        header = ['Time','X', 'Y','Z','r','p','y']
-        self.create_or_open_csv(self.folder_name,file_name,header,data )
+        data = self.find_transform("opti_end_effector/base_link","world")
+        if data != None and self.data_frame != None:
+            file_name = "opti_end_effector-world.csv"
+            header = ['Time', 'X', 'Y','Z','r','p','y']
+            data[1] = data[1] - (self.data_frame[1] - 0.946489982)
+            data[2] = data[2]  - (self.data_frame[2] + 0.005516529)
+            data[3] = data[3]  - (self.data_frame[3] + 0.049718142)
+            data[4] = data[4] + 180
+            data[6] = data[6] + 90
+            data = data
+            self.create_or_open_csv(self.folder_name,file_name,header,data )
 
     def opti_frame_callback(self,msg):
-        roll, pitch, yaw = self.euler_from_quaternion(
-        msg.pose.orientation.x,
-        msg.pose.orientation.y,
-        msg.pose.orientation.z,
-        msg.pose.orientation.w)
-
-        time = float(f"{msg.header.stamp.sec}{msg.header.stamp.nanosec}")*1e-9
-        time_secs= datetime.fromtimestamp(time).strftime('%S.%f')  
-        
-        data = [
-                time_secs,
-                msg.pose.position.x,
-                msg.pose.position.y,
-                msg.pose.position.z,
-                roll, 
-                pitch, 
-                yaw]
-        
-        file_name = "opti_frame-world.csv"
-        header = ['Time','X', 'Y','Z','r','p','y']
-        self.create_or_open_csv(self.folder_name,file_name,header,data )
-    
+        self.data_frame = self.find_transform("opti_frame/base_link","world")
 
     def on_timer(self):
-        data = self.find_transform("base_link")
+        data = self.find_transform("base_link","world")
         if data != None:
             file_name = "base_link-world.csv"
             header = ['Time', 'X', 'Y','Z','r','p','y']
             data = data
             self.create_or_open_csv(self.folder_name,file_name,header,data )
 
-        data = self.find_transform("tool0")
+        data = self.find_transform("tool0","world")
         if data != None:
             file_name = "tool0-world.csv"
             header = ['Time', 'X', 'Y','Z','r','p','y']
@@ -144,12 +104,11 @@ class FrameListener(Node):
             self.create_or_open_csv(self.folder_name,file_name,header,data )
 
 
-    def find_transform(self,target_frame):
+    def find_transform(self,target_frame,base_frame):
         # Store frame names in variables that will be used to
         # compute transformations
         from_frame_rel = target_frame
-        to_frame_rel = 'world'
-    
+        to_frame_rel = base_frame
         trans = None
         
         try:
@@ -163,15 +122,14 @@ class FrameListener(Node):
                 f'Could not transform {to_frame_rel} to {from_frame_rel}: {ex}')
             return
         
-        time= self.get_clock().now().nanoseconds*1e-9
-        time_secs= datetime.fromtimestamp(time).strftime('%S.%f')  
+        time= self.get_clock().now().nanoseconds*1e-9 
         roll, pitch, yaw = self.euler_from_quaternion(
         trans.transform.rotation.x,
         trans.transform.rotation.y,
         trans.transform.rotation.z,
         trans.transform.rotation.w)  
         data = [
-                time_secs,
+                time,
                 trans.transform.translation.x,
                 trans.transform.translation.y,
                 trans.transform.translation.z,
@@ -184,24 +142,27 @@ class FrameListener(Node):
     def euler_from_quaternion(self, x, y, z, w):
         """
         Convert a quaternion into euler angles (roll, pitch, yaw)
-        roll is rotation around x in radians (counterclockwise)
-        pitch is rotation around y in radians (counterclockwise)
-        yaw is rotation around z in radians (counterclockwise)
+        roll is rotation around x in degrees (counterclockwise)
+        pitch is rotation around y in degrees (counterclockwise)
+        yaw is rotation around z in degrees (counterclockwise)
         """
         t0 = +2.0 * (w * x + y * z)
         t1 = +1.0 - 2.0 * (x * x + y * y)
         roll_x = math.atan2(t0, t1)
+        roll_x = math.degrees(roll_x)
         
         t2 = +2.0 * (w * y - z * x)
         t2 = +1.0 if t2 > +1.0 else t2
         t2 = -1.0 if t2 < -1.0 else t2
         pitch_y = math.asin(t2)
+        pitch_y = math.degrees(pitch_y)
         
         t3 = +2.0 * (w * z + x * y)
         t4 = +1.0 - 2.0 * (y * y + z * z)
         yaw_z = math.atan2(t3, t4)
+        yaw_z = math.degrees(yaw_z)
         
-        return roll_x, pitch_y, yaw_z # in radians
+        return roll_x, pitch_y, yaw_z # in degrees
   
 
     def create_or_open_csv(self, folder_path, file_name,header,data):

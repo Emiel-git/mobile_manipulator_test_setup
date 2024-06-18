@@ -80,7 +80,7 @@ class BaseMovementNode(Node):
                 return velocity
             elif not self.set_decc_time:
                 decc = -acc[self.i+1]
-                t_decc = np.sqrt(2*self.velocity/decc)
+                t_decc = self.velocity/decc
                 s_decc = self.velocity*t_decc-0.5*decc*t_decc*t_decc
                 if self.position >= (max_pos[self.i]-s_decc):
                     self.set_decc_time = 1

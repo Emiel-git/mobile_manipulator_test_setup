@@ -27,7 +27,7 @@ class CollisionObjects(Node):
         self.declare_parameter('y', [0.0, 0.0, 0.0, 0.0])
 
         self.pub_ = self.create_publisher(CollisionObject, "/collision_objects", 10)
-        sample_frequency = 1/50
+        sample_frequency = 1/50		#50Hz
         self.timer_ = self.create_timer(sample_frequency, self.publish_collision_objects)
 
     def get_quaternion_from_euler(self, roll, pitch, yaw):

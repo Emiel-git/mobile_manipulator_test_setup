@@ -31,6 +31,6 @@ collision_objects:
 # position is defined in meters, velocity in m/s, acceleration m/s2
 base_movement:   
   ros__parameters:
-    max_pos: [1.0]
-    max_v: [0.05]
-    max_a: [0.33,-0.33]
+    max_pos: [0.6,0.8,1.2,1.5]
+    max_v: [0.25,0.1,0.2,0.25]
+    max_a: [0.33,-0.33,0.33,0.33,-0.33]
